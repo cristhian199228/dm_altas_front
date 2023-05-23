@@ -8,7 +8,10 @@ axios.defaults.baseURL = process.env.VUE_APP_API_URL ?? 'http://localhost:8000'
 
 export default new Vuex.Store({
   state: {
+    dialogSubirDescansoMedico: false,
+    photo:undefined,
     paciente: {},
+    atencion_id: null,
     tableOptions: {},
     loading: false,
     data: [],
@@ -33,8 +36,17 @@ export default new Vuex.Store({
     SET_DATA(state, data) {
       state.data = data
     },
+    SET_PHOTO(state, photo) {
+      state.photo = photo;
+    },
     SET_LOADING(state, isLoading) {
       state.loading = isLoading
+    },
+    SET_DIALOG_SUBIR_DESCANSO_MEDICO(state, dialog) {
+      state.dialogSubirDescansoMedico = dialog
+    },
+    SET_ATENCION_ID(state, id) {
+      state.atencion_id = id
     },
     SET_TABLE_OPTIONS(state, options) {
       state.tableOptions = options
@@ -55,7 +67,12 @@ export default new Vuex.Store({
     },
     SET_EXTRANJERO(state) {
       state.isForeign = true
-    }
+    },
+    SHOW_SNACKBAR(state, snackbar) {
+      state.snackbar.show = snackbar.show;
+      state.snackbar.message = snackbar.message;
+      state.snackbar.color = snackbar.color;
+    },
   },
   actions: {
     async logout({ commit }) {
@@ -119,17 +136,19 @@ export default new Vuex.Store({
     async fetchAtencion({ commit }, id_paciente) {
       try {
         const res = await axios.get(`/api/fetchAtencion/${id_paciente}`)
-        console.log(res)
+        //console.log(res)
         commit('SET_DATA', res.data)
       } catch (e) {
         throw new Error(await e.response.data.message)
       }
     },
-    async storeAtencion(_, params) {
+    async storeAtencion({ dispatch }, params) {
       try {
-        const res = await axios.post(`/api/storeAtencion/`, params)
+        await axios.post(`/api/storeAtencion/`, params)
         //commit('SHOW_SUCCESS_SNACKBAR', await res.data.message)
-        return await res.data.data.id_temp_fichapaciente
+        console.log(params)
+        dispatch('fetchAtencion', params.id_paciente)
+        //return await res.data.data.id_temp_fichapaciente
       } catch (e) {
         // commit('SHOW_ERROR_SNACKBAR', await e.response.data.message)
         throw new Error(await e.response.data.message)
@@ -144,176 +163,38 @@ export default new Vuex.Store({
         throw new Error(await e.response.data.message)
       }
     },
-    async fetchPaises(buscar) {
+    uploadDescansoMedico({ commit, dispatch, state }) {
       const config = {
-        params: { buscar }
-      }
-      try {
-        const { data } = await axios.get('/api/v1/paises/buscar', config)
-        return data
-      } catch (e) {
-        throw new Error(await e.response.data.message)
-      }
+        headers: { "content-type": "multipart/form-data" },
+      };
+      const snackbar = {};
+      const formData = new FormData();
+      formData.append("file", state.photo);
+      formData.append("id_atencion", state.atencion_id);
+      //commit('SET_LOADING', true, { root: true });
+
+      axios.post('/api/uploadDescansoMedico', formData, config)
+        .then(res => {
+          if (res && res.data) {
+            commit('SET_LOADING', false, { root: true });
+            snackbar.show = true;
+            snackbar.color = "success";
+            snackbar.message = "Se subió la foto correctamente";
+            commit('SET_DIALOG_SUBIR_DESCANSO_MEDICO', false);
+            commit('SHOW_SNACKBAR', snackbar);
+            dispatch('fetchAtencion', state.paciente.idpacientes)
+          }
+        })
+        .catch(err => {
+          if (err && err.response) {
+            snackbar.show = true;
+            snackbar.color = "error";
+            snackbar.message = err.response.data.message;
+            commit('SHOW_SNACKBAR', snackbar, { root: true });
+            dispatch('getEvidencias');
+          }
+        });
     },
-    async fetchCiudadesByIdPais(id_pais) {
-      try {
-        const { data } = await axios.get(`/api/v1/paises/${id_pais}/ciudades`)
-        return data
-      } catch (e) {
-        throw new Error(await e.response.data.message)
-      }
-    },
-    async fetchTransportes() {
-      try {
-        const { data } = await axios.get(`/api/v1/transportes`)
-        return data
-      } catch (e) {
-        throw new Error(await e.response.data.message)
-      }
-    },
-    async fetchComorbilidades() {
-      try {
-        const { data } = await axios.get('/api/v1/comorbilidades')
-        return data
-      } catch (e) {
-        throw new Error(await e.response.data.message)
-      }
-    },
-    async fetchSintomas({ state }) {
-      if (state.isForeign) {
-        try {
-          const { data } = await axios.get('/api/v1/datosClinicosEn')
-          return data
-        } catch (e) {
-          throw new Error(await e.response.data.message)
-        }
-      }
-      else {
-        try {
-          const { data } = await axios.get('/api/v1/datosClinicos')
-          return data
-        } catch (e) {
-          throw new Error(await e.response.data.message)
-        }
-      }
-    },
-    async fetchSintomasNuevo({ state }) {
-      if (state.isForeign) {
-        try {
-          const { data } = await axios.get('/api/v1/datosClinicosNuevoEn')
-          return data
-        } catch (e) {
-          throw new Error(await e.response.data.message)
-        }
-      }
-      else {
-        try {
-          const { data } = await axios.get('/api/v1/datosClinicosNuevo')
-          return data
-        } catch (e) {
-          throw new Error(await e.response.data.message)
-        }
-      }
-    },
-    async fetchMarcasVacuna() {
-      try {
-        const { data } = await axios.get('/api/v1/marcasVacuna')
-        return data
-      } catch (e) {
-        throw new Error(await e.response.data.message)
-      }
-    },
-    async fetchDepartamentos() {
-      try {
-        const { data } = await axios.get('/api/departamentosReniec')
-        return data
-      } catch (e) {
-        throw new Error(await e.response.data.message)
-      }
-    },
-    async fetchProvincias(_, coDepartamento) {
-      const config = {
-        params: {
-          coDepartamento
-        }
-      }
-      try {
-        const res = await axios.get('/api/provinciasReniec', config)
-        return await res.data
-      } catch (e) {
-        throw new Error(await e.response.data.message)
-      }
-    },
-    async fetchDistritos(_, params) {
-      const config = {
-        params,
-      }
-      try {
-        const res = await axios.get('/api/distritosReniec', config)
-        return await res.data
-      } catch (e) {
-        throw new Error(await e.response.data.message)
-      }
-    },
-    async showPaciente({ getters }) {
-      try {
-        const { data } = await axios.get(`/api/v1/showPaciente/${getters.idPaciente}`)
-        return data
-      } catch (e) {
-        throw new Error(await e.response.data.message)
-      }
-    },
-    async buscarEmpresa(buscar) {
-      const config = {
-        params: { buscar }
-      }
-      try {
-        const res = await axios.get('/api/v1/searchEmpresa', config)
-        return await res.data
-      } catch (e) {
-        throw new Error(await e.response.data.message)
-      }
-    },
-    async fetchDepartamentosUbigeo() {
-      try {
-        const { data } = await axios.get('/api/departamentos')
-        return data
-      } catch (e) {
-        throw new Error(await e.response.data.message)
-      }
-    },
-    async fetchProvinciasPorDepartamento(idDepartamento) {
-      try {
-        const { data } = await axios.get(`/api/departamentos/${idDepartamento}/provincias`)
-        return data
-      } catch (e) {
-        throw new Error(await e.response.data.message)
-      }
-    },
-    async fetchDistritosPorProvincia(idProvincia) {
-      try {
-        const { data } = await axios.get(`/api/provincias/${idProvincia}/distritos`)
-        return data
-      } catch (e) {
-        throw new Error(await e.response.data.message)
-      }
-    },
-    async fetchDosisCovid19({ getters }) {
-      try {
-        const { data } = await axios.get(`/api/v1/pacientes/${getters.idPaciente}/dosisCovid19`)
-        return data
-      } catch (e) {
-        throw new Error(await e.response.data.message)
-      }
-    },
-    async fetchHospitalizacion({ getters }) {
-      try {
-        const { data } = await axios.get(`/api/v1/pacientes/${getters.idPaciente}/hospitalizacion`)
-        return data
-      } catch (e) {
-        throw new Error(await e.response.data.message)
-      }
-    }
   },
   modules: {
   }

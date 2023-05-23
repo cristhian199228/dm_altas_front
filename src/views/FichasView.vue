@@ -79,32 +79,47 @@
               <v-spacer></v-spacer>
             </v-toolbar>
             <v-card-text>
-
               <v-data-table :headers="headers" :items="atenciones" class="elevation-1">
-                <template v-slot:[`item.calories`]="{ item }">
-                  <v-chip small :color="getColor(item.calories)" dark>
-                    {{ item.calories }}
+                <template v-slot:[`item.estado`]="{ item }">
+                  <v-chip v-if="item.estado == 0" small color="orange" dark>
+                    EN PROCESO
+                  </v-chip>
+                  <v-chip v-if="item.estado == 1" small color="green" dark>
+                    CERRADO
                   </v-chip>
                 </template>
-                <template v-slot:[`item.descanso_medico`]="{}">
-                  <v-btn color="#6988C0" fab x-small dark elevation="0">
-                    <v-icon>mdi-plus</v-icon>
+                <template v-slot:[`item.f_inicio`]="{ item }">
+                  <div v-if="item.f_fin == null">
+                    -
+                  </div>
+                </template>
+                <template v-slot:[`item.f_fin`]="{ item }">
+                  <div v-if="item.f_fin == null">
+                    -
+                  </div>
+                </template>
+                <template v-slot:[`item.descanso_medico`]="{ item }">
+                  <v-btn color="#6988C0" @click="abrirDialogSubirDescansoMedico(item.id)" small dark icon elevation="0">
+                    <v-icon>mdi-cloud-upload-outline</v-icon>
+                  </v-btn>
+                  <v-btn v-if="item.descansos_medicos.length > 0" color="#6988C0"
+                    @click="abrirDialogSubirDescansoMedico(item.id)" fab small icon dark elevation="0">
+                    <v-icon>mdi-eye</v-icon>
                   </v-btn>
                 </template>
                 <template v-slot:[`item.evidencia`]="{}">
-                  <v-btn color="#6988C0" fab x-small dark elevation="0">
-                    <v-icon>mdi-plus</v-icon>
+                  <v-btn color="#6988C0" fab small dark icon elevation="0">
+                    <v-icon>mdi-cloud-upload-outline</v-icon>
                   </v-btn>
                 </template>
                 <template v-slot:[`item.consentimiento`]="{}">
-                  <v-btn color="#6988C0" fab x-small dark elevation="0">
-                    <v-icon>mdi-plus</v-icon>
+                  <v-btn color="#6988C0" fab small dark icon elevation="0">
+                    <v-icon>mdi-text-box-plus</v-icon>
                   </v-btn>
                 </template>
               </v-data-table>
               <v-btn color="#EF820F" @click="agregarAtencion()" fixed bottom right fab
                 dark><v-icon>mdi-plus</v-icon></v-btn>
-
             </v-card-text>
           </v-card>
         </v-sheet>
@@ -166,40 +181,42 @@
         </v-sheet>
       </v-col>
     </v-row>
+    <DialogSubirDescansoMedico />
   </v-main>
 </template>
 
 <script>
+import DialogSubirDescansoMedico from '../components/DialogSubirDescansoMedico'
 export default {
   name: 'FichasView',
+  components: {
+    DialogSubirDescansoMedico
+  },
   data: () => ({
     headers: [
-      { text: 'F.Inicio', align: 'center', sortable: false, value: 'name' },
+      { text: 'F.Inicio', align: 'center', sortable: false, value: 'f_inicio' },
       { text: 'F.Fin', align: 'center', value: 'f_fin' },
       { text: 'Descanso Medico', align: 'center', value: 'descanso_medico' },
       { text: 'Consentimiento', align: 'center', value: 'consentimiento' },
       { text: 'Evidencias', align: 'center', value: 'evidencia' },
       { text: 'Estado', align: 'center', value: 'estado' },
     ],
-    links: [
-      'Dashboard',
-      'Messages',
-      'Profile',
-      'Updates',
-    ],
   }),
   methods: {
-    getColor(calories) {
-      if (calories == "0") return 'orange'
-      else if (calories == "1") return 'green'
-      else return 'orange'
-    },
-    agregarAtencion(id) {
-      this.$store.dispatch('storeAtencion', id)
+    agregarAtencion() {
+      const data = {
+        id_paciente: this.$store.state.paciente.idpacientes
+      }
+      this.$store.dispatch('storeAtencion', data)
     },
     listarAtencion(id) {
       this.$store.dispatch('fetchAtencion', id)
       //console.log(this.$store.state.data)
+    },
+    abrirDialogSubirDescansoMedico(id) {
+
+      this.$store.commit('SET_ATENCION_ID', id)
+      this.$store.commit('SET_DIALOG_SUBIR_DESCANSO_MEDICO', true)
     }
   },
   computed: {

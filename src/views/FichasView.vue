@@ -1,6 +1,8 @@
 <template>
   <v-main class="grey lighten-3 mt-4">
-
+    <viewer :images="images" @inited="inited" class="viewer" ref="viewer">
+      <img v-for="(src, i) in images" :src="src" :key="i" class="image" />
+    </viewer>
     <v-row class="mx-2">
       <v-col cols="12" sm="2">
         <v-sheet rounded="lg" min-height="320">
@@ -103,7 +105,7 @@
                     <v-icon>mdi-cloud-upload-outline</v-icon>
                   </v-btn>
                   <v-btn v-if="item.descansos_medicos.length > 0" color="#6988C0"
-                    @click="abrirDialogSubirDescansoMedico(item.id)" fab small icon dark elevation="0">
+                    @click="verFotos(item.descansos_medicos)" fab small icon dark elevation="0">
                     <v-icon>mdi-eye</v-icon>
                   </v-btn>
                 </template>
@@ -112,8 +114,8 @@
                     <v-icon>mdi-cloud-upload-outline</v-icon>
                   </v-btn>
                 </template>
-                <template v-slot:[`item.consentimiento`]="{}">
-                  <v-btn color="#6988C0" fab small dark icon elevation="0">
+                <template v-slot:[`item.consentimiento`]="{item}">
+                  <v-btn color="#6988C0" @click="abrirDialogConsentimiento(item.id)" fab small dark icon elevation="0">
                     <v-icon>mdi-text-box-plus</v-icon>
                   </v-btn>
                 </template>
@@ -182,15 +184,20 @@
       </v-col>
     </v-row>
     <DialogSubirDescansoMedico />
+    <DialogConsentimiento />
   </v-main>
 </template>
-
 <script>
+import 'viewerjs/dist/viewer.css'
+import { component as Viewer } from "v-viewer"
 import DialogSubirDescansoMedico from '../components/DialogSubirDescansoMedico'
+import DialogConsentimiento from '../components/DialogConsentimiento'
 export default {
   name: 'FichasView',
   components: {
-    DialogSubirDescansoMedico
+    DialogSubirDescansoMedico,
+    DialogConsentimiento,
+    Viewer
   },
   data: () => ({
     headers: [
@@ -201,8 +208,12 @@ export default {
       { text: 'Evidencias', align: 'center', value: 'evidencia' },
       { text: 'Estado', align: 'center', value: 'estado' },
     ],
+    images: []
   }),
   methods: {
+    inited(viewer) {
+      this.$viewer = viewer
+    },
     agregarAtencion() {
       const data = {
         id_paciente: this.$store.state.paciente.idpacientes
@@ -214,10 +225,19 @@ export default {
       //console.log(this.$store.state.data)
     },
     abrirDialogSubirDescansoMedico(id) {
-
       this.$store.commit('SET_ATENCION_ID', id)
       this.$store.commit('SET_DIALOG_SUBIR_DESCANSO_MEDICO', true)
-    }
+    },
+    abrirDialogConsentimiento(){
+      this.$store.commit('SET_DIALOG_CONSENTIMIENTO', true)
+    },
+    verFotos(fotos) {
+      this.images = [];
+      fotos.forEach(foto => {
+        this.images.push(process.env.VUE_APP_API_URL + '/api/showdm/' + foto.ruta);
+      });
+      this.$viewer.show();
+    },
   },
   computed: {
     paciente() {
@@ -235,3 +255,8 @@ export default {
   }
 }
 </script>
+<style>
+.image {
+  display: none;
+}
+</style>

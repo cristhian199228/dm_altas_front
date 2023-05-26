@@ -276,8 +276,8 @@ export default {
       val && setTimeout(() => (this.activePicker = 'YEAR'))
     },
   },
-  created() {
-    this.cargarDepartamentos()
+  async created() {
+    await this.cargarDepartamentos()
   },
   mounted() {
     this.$tours['myTour'].start()

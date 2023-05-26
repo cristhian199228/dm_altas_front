@@ -26,12 +26,6 @@ export default {
   name: "LoginView",
   data() {
     return {
-      documentos: [
-        {id: "1", name: "DNI"},
-        {id: "2", name: "CARNET DE EXTRANJERÍA"},
-        {id: "3", name: "PASAPORTE"},
-        {id: "7", name: "RUT"},
-      ],
     }
   }
 }

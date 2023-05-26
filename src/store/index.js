@@ -9,7 +9,8 @@ axios.defaults.baseURL = process.env.VUE_APP_API_URL ?? 'http://localhost:8000'
 export default new Vuex.Store({
   state: {
     dialogSubirDescansoMedico: false,
-    photo:undefined,
+    dialogConsentimiento: false,
+    photo: undefined,
     paciente: {},
     atencion_id: null,
     tableOptions: {},
@@ -44,6 +45,9 @@ export default new Vuex.Store({
     },
     SET_DIALOG_SUBIR_DESCANSO_MEDICO(state, dialog) {
       state.dialogSubirDescansoMedico = dialog
+    },
+    SET_DIALOG_CONSENTIMIENTO(state, dialog) {
+      state.dialogConsentimiento = dialog
     },
     SET_ATENCION_ID(state, id) {
       state.atencion_id = id
@@ -194,6 +198,38 @@ export default new Vuex.Store({
             dispatch('getEvidencias');
           }
         });
+    },
+    async fetchDepartamentos() {
+      try {
+        const { data } = await axios.get('/api/departamentosReniec')
+        return data
+      } catch (e) {
+        throw new Error(await e.response.data.message)
+      }
+    },
+    async fetchProvincias(_, coDepartamento) {
+      const config = {
+        params: {
+          coDepartamento
+        }
+      }
+      try {
+        const res = await axios.get('/api/provinciasReniec', config)
+        return await res.data
+      } catch (e) {
+        throw new Error(await e.response.data.message)
+      }
+    },
+    async fetchDistritos(_, params) {
+      const config = {
+        params,
+      }
+      try {
+        const res = await axios.get('/api/distritosReniec', config)
+        return await res.data
+      } catch (e) {
+        throw new Error(await e.response.data.message)
+      }
     },
   },
   modules: {

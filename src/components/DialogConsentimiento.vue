@@ -5,10 +5,24 @@
                 <v-card-title> CONSENTIMIENTO DESCANSO MEDICO</v-card-title>
                 <v-divider></v-divider>
                 <v-card-text>
-                    <v-text-field label="Inicio de Descanso Medico" required></v-text-field>
-                    <v-text-field label="Fin de Descanso Medico" required></v-text-field>
+                    <v-menu ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="date"
+                        transition="scale-transition" offset-y min-width="auto">
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-text-field v-model="date" label="Inicio y Fin de Descanso Medico" prepend-icon="mdi-calendar"
+                                readonly v-bind="attrs" v-on="on"></v-text-field>
+                        </template>
+                        <v-date-picker range v-model="date" no-title scrollable>
+                            <v-spacer></v-spacer>
+                            <v-btn text color="primary" @click="menu = false">
+                                Cancel
+                            </v-btn>
+                            <v-btn text color="primary" @click="$refs.menu.save(date)">
+                                OK
+                            </v-btn>
+                        </v-date-picker>
+                    </v-menu>
                     <v-text-field label="Nombre del medico que otorgo el Descanso medico" required></v-text-field>
-                    <v-text-field label="Motivo del descanso medico" required></v-text-field>
+                    <v-select label="Motivo del descanso medico" :items="motivoDescansoMedico"></v-select>
                     <v-select label="Centro medico donde se otorgo el Descanso Medico" :items="centrosMedicos"></v-select>
                     <v-row>
                         <v-col>
@@ -32,7 +46,8 @@
                     vigentes.
                     <br>
                     <br>
-                    <br>
+                    FIRMAR EN EL RECUADRO
+                    <vueSignature class="mt-1" id="signature" ref="signature" w="100%" h="100%" :sigOption="option"></vueSignature>
                     <!--  <template>
                         <v-card width="400px" elevation="5">
                             <v-img :src="fc.firma"></v-img>
@@ -61,13 +76,19 @@
     </v-container>
 </template>
 <script>
+import vueSignature from "vue-signature"
 import DialogFirma from '../components/DialogFirma'
 export default {
     name: 'DialogConsentimiento',
     components: {
-        DialogFirma
+        DialogFirma,
+        vueSignature,
     },
     data: () => ({
+        option: {
+            penColor: "rgb(0, 0, 0)",
+            backgroundColor: "rgb(235, 236, 237 )"
+        },
         estado: false,
         centrosMedicos: [
             "Clínica Arequipa",
@@ -88,8 +109,19 @@ export default {
             "Clínica Auna Valle Sur",
             "Clínica San Pablo",
             "Otros (especifique)"
-        ]
-
+        ],
+        motivoDescansoMedico: [
+            'Accidente de trabajo ',
+            'Accidente de transito ',
+            'Accidente común',
+            'Enfermedad',
+            "Maternidad"
+        ],
+        date: null,
+        menu: false,
+        modal: false,
+        menu2: false,
+        dates: ['2019-09-10', '2019-09-20'],
 
     }),
     computed: {
@@ -98,7 +130,10 @@ export default {
         },
         paciente() {
             return this.$store.state.paciente
-        }
+        },
+        dateRangeText() {
+            return this.dates.join(' ~ ')
+        },
     },
     methods: {
         seleccionarFoto(e) {

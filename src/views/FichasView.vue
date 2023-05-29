@@ -91,13 +91,19 @@
                   </v-chip>
                 </template>
                 <template v-slot:[`item.f_inicio`]="{ item }">
-                  <div v-if="item.f_fin == null">
+                  <div v-if="item.descansos_medicos[0].fecha_inicio == null">
                     -
+                  </div>
+                  <div v-else>
+                    {{ item.descansos_medicos[0].fecha_inicio }}
                   </div>
                 </template>
                 <template v-slot:[`item.f_fin`]="{ item }">
-                  <div v-if="item.f_fin == null">
+                  <div v-if="item.descansos_medicos[0].fecha_fin == null">
                     -
+                  </div>
+                  <div v-else>
+                    {{ item.descansos_medicos[0].fecha_fin }}
                   </div>
                 </template>
                 <template v-slot:[`item.descanso_medico`]="{ item }">
@@ -114,8 +120,11 @@
                     <v-icon>mdi-cloud-upload-outline</v-icon>
                   </v-btn>
                 </template>
-                <template v-slot:[`item.consentimiento`]="{item}">
-                  <v-btn color="#6988C0" @click="abrirDialogConsentimiento(item.id)" fab small dark icon elevation="0">
+                <template v-slot:[`item.consentimiento`]="{ item }">
+                  <v-btn v-if="item.consentimientos.length > 0" color="#6988C0" @click="abrirDialogConsentimientoVisor(item.id)" fab small dark icon elevation="0">
+                    <v-icon>mdi-eye</v-icon>
+                  </v-btn>
+                  <v-btn v-else color="#6988C0" @click="abrirDialogConsentimiento(item.id)" fab small dark icon elevation="0">
                     <v-icon>mdi-text-box-plus</v-icon>
                   </v-btn>
                 </template>
@@ -126,7 +135,6 @@
           </v-card>
         </v-sheet>
       </v-col>
-
       <v-col cols="12" sm="2">
         <v-sheet rounded="lg" min-height="268">
           <v-card class="mx-auto " max-width="300" elevation="0">
@@ -228,7 +236,8 @@ export default {
       this.$store.commit('SET_ATENCION_ID', id)
       this.$store.commit('SET_DIALOG_SUBIR_DESCANSO_MEDICO', true)
     },
-    abrirDialogConsentimiento(){
+    abrirDialogConsentimiento(id) {
+      this.$store.commit('SET_ATENCION_ID', id)
       this.$store.commit('SET_DIALOG_CONSENTIMIENTO', true)
     },
     verFotos(fotos) {

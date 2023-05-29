@@ -231,6 +231,26 @@ export default new Vuex.Store({
         throw new Error(await e.response.data.message)
       }
     },
+    async fetchDocumentosRequeridos() {
+      try {
+        const res = await axios.get('/api/fetchDocumentosRequeridos')
+        return await res.data
+      } catch (e) {
+        throw new Error(await e.response.data.message)
+      }
+    },
+    async storeConsentimiento({ dispatch }, params) {
+      try {
+        await axios.post(`/api/storeConsentimiento/`, params)
+        //commit('SHOW_SUCCESS_SNACKBAR', await res.data.message)
+/*         console.log(params) */
+        dispatch('fetchAtencion', params.id_paciente)
+        //return await res.data.data.id_temp_fichapaciente
+      } catch (e) {
+        // commit('SHOW_ERROR_SNACKBAR', await e.response.data.message)
+        throw new Error(await e.response.data.message)
+      }
+    }
   },
   modules: {
   }

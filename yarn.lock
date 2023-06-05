@@ -5846,7 +5846,7 @@ signal-exit@^3.0.0, signal-exit@^3.0.2, signal-exit@^3.0.3:
 
 signature_pad@^3.0.0-beta.3:
   version "3.0.0-beta.4"
-  resolved "https://registry.yarnpkg.com/signature_pad/-/signature_pad-3.0.0-beta.4.tgz#2a8441559e9f439e7f2f525da3ee630ef973ecf6"
+  resolved "https://registry.npmjs.org/signature_pad/-/signature_pad-3.0.0-beta.4.tgz"
   integrity sha512-cOf2NhVuTiuNqe2X/ycEmizvCDXk0DoemhsEpnkcGnA4kS5iJYTCqZ9As7tFBbsch45Q1EdX61833+6sjJ8rrw==
 
 sirv@^1.0.7:
@@ -6506,6 +6506,11 @@ vue-loader@^17.0.0:
     hash-sum "^2.0.0"
     watchpack "^2.4.0"
 
+vue-pdf-embed@^1.1.6:
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/vue-pdf-embed/-/vue-pdf-embed-1.1.6.tgz#5bb806ed495970c09fb955c9fa40fb3a6bd4fced"
+  integrity sha512-CRQIw8OxiD6H1n8KT2zVWbp/00fA3PgSV/JYJ0Ut+FdC1jHrRDHNBj3BvaRVwZFZg3EJ8LLjyEDYxWWUMOjrDw==
+
 vue-router@^3.5.1:
   version "3.6.5"
   resolved "https://registry.npmjs.org/vue-router/-/vue-router-3.6.5.tgz"
@@ -6513,7 +6518,7 @@ vue-router@^3.5.1:
 
 vue-signature@^2.5.6:
   version "2.5.6"
-  resolved "https://registry.yarnpkg.com/vue-signature/-/vue-signature-2.5.6.tgz#cab2edea72b1c92ed1f577dde42dac5547c50874"
+  resolved "https://registry.npmjs.org/vue-signature/-/vue-signature-2.5.6.tgz"
   integrity sha512-S09IpnWpTp+tjarCiQagh7I8jOKelMSq9hbDGVtmk2wHcj9WiiN/KUJI2MZoyP+Dvq3Db91H4mE4vqhI4M1KWQ==
   dependencies:
     signature_pad "^3.0.0-beta.3"

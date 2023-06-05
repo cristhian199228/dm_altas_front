@@ -2,12 +2,14 @@
     <v-container>
         <v-dialog v-model="dialog" persistent max-width="600px">
             <v-card>
-                <v-card-title>SUBIR DESCANSO MEDICO</v-card-title>
+                <v-card-title>SUBIR EVIDENCIAS</v-card-title>
                 <v-divider></v-divider>
                 <v-card-text>
                     <br>
-                    <input type="file" ref="photo" accept="image/*,.pdf" />
-                    <!--  <v-file-input show-size ref="photo" label="SELECCIONE DOCUMENTO"
+                    <v-file-input show-size ref="photo" label="SELECCIONE DOCUMENTO"
+                        messages="Archivos admitidos: imagenes y pdf" accept="image/*,.pdf"
+                        @change="seleccionarFoto"></v-file-input>
+                        <!--  <v-file-input show-size ref="photo" label="SELECCIONE DOCUMENTO"
                         messages="Archivos admitidos: imagenes y pdf" accept="image/*,.pdf"
                         @change="seleccionarFoto"></v-file-input> -->
                 </v-card-text>
@@ -15,7 +17,7 @@
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn text color="normal" @click="close">CANCELAR</v-btn>
-                    <v-btn color="primary" @click="upload"><v-icon left>mdi-cloud-upload</v-icon>SUBIR</v-btn>
+                    <v-btn color="primary" @click="upload()"><v-icon left>mdi-cloud-upload</v-icon>SUBIR</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -23,18 +25,35 @@
 </template>
 <script>
 export default {
-    name: 'DialogSubirDescansoMedico',
+    name: 'DialogSubirEvidencias',
     data: () => ({
-
     }),
     computed: {
         dialog() {
-            return this.$store.state.dialogSubirDescansoMedico
+            return this.$store.state.dialogEvidencias
+        },
+        photo() {
+            return this.$store.state.photo
         }
     },
     methods: {
+        seleccionarFoto(e) {
+            this.$store.commit('SET_PHOTO', e);
+        },
         close() {
-           this.$store.commit('SET_DIALOG_SUBIR_DESCANSO_MEDICO',false)
+            this.$store.commit('SET_DIALOG_EVIDENCIAS', false)
+        },
+        upload() {
+            if (this.photo) {
+                this.$store.dispatch('uploadEvidencias');
+            } else {
+                const snackbar = {
+                    show: true,
+                    color: 'error',
+                    message: 'Por favor seleccione un archivo!'
+                };
+                this.$store.commit('SHOW_SNACKBAR', snackbar);
+            }
         },
     }
 }

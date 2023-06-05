@@ -8,8 +8,12 @@ import { extend, ValidationProvider, ValidationObserver, setInteractionMode, loc
 import { required, integer, min, max, required_if, double, length, between, email } from "vee-validate/dist/rules";
 import es from 'vee-validate/dist/locale/es.json'
 import VueTour from 'vue-tour'
+import axios from 'axios'
+
 require('vue-tour/dist/vue-tour.css')
 
+axios.defaults.headers.common['Accept'] = 'application/json';
+axios.defaults.withCredentials = true
 
 setInteractionMode("eager");
 

@@ -23,8 +23,6 @@
                 </v-btn>
               </v-card-actions>
             </v-img>
-
-
             <v-card-text>
               <v-text-field v-model="paciente.nombres" dense readonly label="NOMBRES"></v-text-field>
               <v-text-field v-model="apellidos" dense readonly label="APELLIDOS"></v-text-field>
@@ -67,21 +65,16 @@
           </v-card>
         </v-sheet>
       </v-col>
-
       <v-col cols="12" sm="8">
-
         <v-sheet min-height="70vh" rounded="lg">
-
           <v-card color="grey lighten-4" flat height="200px" tile>
-
             <v-toolbar dense color="#1E286C" dark>
-
               <v-spacer></v-spacer>
               <v-toolbar-title>LISTADO DE ATENCIONES</v-toolbar-title>
               <v-spacer></v-spacer>
             </v-toolbar>
             <v-card-text>
-              <v-data-table :headers="headers" :items="atenciones" class="elevation-1">
+              <v-data-table :headers="headers" :items="atenciones" hide-default-footer class="elevation-1">
                 <template v-slot:[`item.estado`]="{ item }">
                   <v-chip v-if="item.estado == 0" small color="orange" dark>
                     EN PROCESO
@@ -91,7 +84,7 @@
                   </v-chip>
                 </template>
                 <template v-slot:[`item.f_inicio`]="{ item }">
-                  <div v-if="item.descansos_medicos[0].fecha_inicio == null">
+                  <div v-if="item.descansos_medicos">
                     -
                   </div>
                   <div v-else>
@@ -99,7 +92,7 @@
                   </div>
                 </template>
                 <template v-slot:[`item.f_fin`]="{ item }">
-                  <div v-if="item.descansos_medicos[0].fecha_fin == null">
+                  <div v-if="item.descansos_medicos">
                     -
                   </div>
                   <div v-else>
@@ -110,21 +103,28 @@
                   <v-btn color="#6988C0" @click="abrirDialogSubirDescansoMedico(item.id)" small dark icon elevation="0">
                     <v-icon>mdi-cloud-upload-outline</v-icon>
                   </v-btn>
-                  <v-btn v-if="item.descansos_medicos.length > 0" color="#6988C0"
+                  <v-btn v-if="item.descansos_medicos && item.descansos_medicos.length > 0" color="#6988C0"
                     @click="verFotos(item.descansos_medicos)" fab small icon dark elevation="0">
                     <v-icon>mdi-eye</v-icon>
                   </v-btn>
                 </template>
-                <template v-slot:[`item.evidencia`]="{}">
-                  <v-btn color="#6988C0" fab small dark icon elevation="0">
+                <template v-slot:[`item.evidencia`]="{ item }">
+                  <v-btn color="#6988C0" @click="abrirDialogEvidencias(item.id)" fab small dark icon elevation="0">
                     <v-icon>mdi-cloud-upload-outline</v-icon>
+                  </v-btn>
+                  <v-btn v-if="item.evidencias && item.evidencias.length > 0" color="#6988C0"
+                    @click="verFotosEvidencia(item.evidencias)" fab small icon dark elevation="0">
+                    <v-icon>mdi-eye</v-icon>
                   </v-btn>
                 </template>
                 <template v-slot:[`item.consentimiento`]="{ item }">
-                  <v-btn v-if="item.consentimientos.length > 0" color="#6988C0" @click="abrirDialogConsentimientoVisor(item.id)" fab small dark icon elevation="0">
+                  <v-btn v-if="item.descansos_medicos[0] && item.descansos_medicos[0].consentimientos" color="#6988C0"
+                    @click="abrirDialogPdfConsentimiento(item.descansos_medicos[0].consentimientos.id)" fab small dark
+                    icon elevation="0">
                     <v-icon>mdi-eye</v-icon>
                   </v-btn>
-                  <v-btn v-else color="#6988C0" @click="abrirDialogConsentimiento(item.id)" fab small dark icon elevation="0">
+                  <v-btn v-else color="#6988C0" :disabled="!item.descansos_medicos[0]"
+                    @click="abrirDialogConsentimiento(item.id)" fab small icon elevation="0">
                     <v-icon>mdi-text-box-plus</v-icon>
                   </v-btn>
                 </template>
@@ -193,6 +193,8 @@
     </v-row>
     <DialogSubirDescansoMedico />
     <DialogConsentimiento />
+    <DialogSubirEvidencias />
+    <DialogPdfConsentimiento ref="dialogPdf" />
   </v-main>
 </template>
 <script>
@@ -200,17 +202,20 @@ import 'viewerjs/dist/viewer.css'
 import { component as Viewer } from "v-viewer"
 import DialogSubirDescansoMedico from '../components/DialogSubirDescansoMedico'
 import DialogConsentimiento from '../components/DialogConsentimiento'
+import DialogSubirEvidencias from '../components/DialogSubirEvidencias'
+import DialogPdfConsentimiento from '@/components/DialogPdfConsentimiento.vue'
 export default {
   name: 'FichasView',
   components: {
     DialogSubirDescansoMedico,
     DialogConsentimiento,
+    DialogSubirEvidencias,
+    DialogPdfConsentimiento,
     Viewer
   },
   data: () => ({
     headers: [
-      { text: 'F.Inicio', align: 'center', sortable: false, value: 'f_inicio' },
-      { text: 'F.Fin', align: 'center', value: 'f_fin' },
+      { text: 'Fecha', align: 'center', sortable: false, value: 'created_at' },
       { text: 'Descanso Medico', align: 'center', value: 'descanso_medico' },
       { text: 'Consentimiento', align: 'center', value: 'consentimiento' },
       { text: 'Evidencias', align: 'center', value: 'evidencia' },
@@ -240,10 +245,26 @@ export default {
       this.$store.commit('SET_ATENCION_ID', id)
       this.$store.commit('SET_DIALOG_CONSENTIMIENTO', true)
     },
+    abrirDialogEvidencias(id) {
+      this.$store.commit('SET_ATENCION_ID', id)
+      this.$store.commit('SET_DIALOG_EVIDENCIAS', true)
+    },
+    abrirDialogPdfConsentimiento(id) {
+      this.$store.commit('SET_CONSENTIMIENTO_ID', id)
+      this.$refs.dialogPdf.onShowPdf(id)
+      this.$store.commit('SET_DIALOG_PDF_CONSENTIMIENTO', true)
+    },
     verFotos(fotos) {
       this.images = [];
       fotos.forEach(foto => {
         this.images.push(process.env.VUE_APP_API_URL + '/api/showdm/' + foto.ruta);
+      });
+      this.$viewer.show();
+    },
+    verFotosEvidencia(fotos) {
+      this.images = [];
+      fotos.forEach(foto => {
+        this.images.push(process.env.VUE_APP_API_URL + '/api/showImagen/' + foto.ruta);
       });
       this.$viewer.show();
     },

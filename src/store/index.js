@@ -9,10 +9,14 @@ axios.defaults.baseURL = process.env.VUE_APP_API_URL ?? 'http://localhost:8000'
 export default new Vuex.Store({
   state: {
     dialogSubirDescansoMedico: false,
+    dialogSubirEvidencia: false,
     dialogConsentimiento: false,
+    dialogPdfConsentimiento: false,
+    dialogEvidencias: false,
     photo: undefined,
     paciente: {},
     atencion_id: null,
+    consentimiento_id: null,
     tableOptions: {},
     loading: false,
     data: [],
@@ -46,11 +50,23 @@ export default new Vuex.Store({
     SET_DIALOG_SUBIR_DESCANSO_MEDICO(state, dialog) {
       state.dialogSubirDescansoMedico = dialog
     },
+    SET_DIALOG_SUBIR_EVIDENCIA(state, dialog) {
+      state.dialogSubirEvidencia = dialog
+    },
     SET_DIALOG_CONSENTIMIENTO(state, dialog) {
       state.dialogConsentimiento = dialog
     },
+    SET_DIALOG_PDF_CONSENTIMIENTO(state, dialog) {
+      state.dialogPdfConsentimiento = dialog
+    },
+    SET_DIALOG_EVIDENCIAS(state, dialog) {
+      state.dialogEvidencias = dialog
+    },
     SET_ATENCION_ID(state, id) {
       state.atencion_id = id
+    },
+    SET_CONSENTIMIENTO_ID(state, id) {
+      state.consentimiento_id = id
     },
     SET_TABLE_OPTIONS(state, options) {
       state.tableOptions = options
@@ -199,6 +215,38 @@ export default new Vuex.Store({
           }
         });
     },
+    uploadEvidencias({ commit, dispatch, state }) {
+      const config = {
+        headers: { "content-type": "multipart/form-data" },
+      };
+      const snackbar = {};
+      const formData = new FormData();
+      formData.append("file", state.photo);
+      formData.append("id_atencion", state.atencion_id);
+      //commit('SET_LOADING', true, { root: true });
+
+      axios.post('/api/evidencias', formData, config)
+        .then(res => {
+          if (res && res.data) {
+            commit('SET_LOADING', false, { root: true });
+            snackbar.show = true;
+            snackbar.color = "success";
+            snackbar.message = "Se subió la foto correctamente";
+            commit('SET_DIALOG_EVIDENCIAS', false);
+            commit('SHOW_SNACKBAR', snackbar);
+            dispatch('fetchAtencion', state.paciente.idpacientes)
+          }
+        })
+        .catch(err => {
+          if (err && err.response) {
+            snackbar.show = true;
+            snackbar.color = "error";
+            snackbar.message = err.response.data.message;
+            commit('SHOW_SNACKBAR', snackbar, { root: true });
+            dispatch('getEvidencias');
+          }
+        });
+    },
     async fetchDepartamentos() {
       try {
         const { data } = await axios.get('/api/departamentosReniec')
@@ -239,15 +287,26 @@ export default new Vuex.Store({
         throw new Error(await e.response.data.message)
       }
     },
-    async storeConsentimiento({ dispatch }, params) {
+    async storeConsentimiento({ dispatch, state }, params) {
       try {
         await axios.post(`/api/storeConsentimiento/`, params)
         //commit('SHOW_SUCCESS_SNACKBAR', await res.data.message)
-/*         console.log(params) */
-        dispatch('fetchAtencion', params.id_paciente)
+        /*         console.log(params) */
+        dispatch('fetchAtencion', state.paciente.idpacientes)
         //return await res.data.data.id_temp_fichapaciente
       } catch (e) {
         // commit('SHOW_ERROR_SNACKBAR', await e.response.data.message)
+        throw new Error(await e.response.data.message)
+      }
+    },
+    async showPdfFichaInvestigacion(_, id) {
+      const config = {
+        responseType: 'blob'
+      }
+      try {
+        const response = await axios.get(`api/showConsentimientoPdf/${id}`, config)
+        return window.URL.createObjectURL(new Blob([response.data]));
+      } catch (e) {
         throw new Error(await e.response.data.message)
       }
     }

@@ -195,7 +195,6 @@ export default {
             this.data.firma = this.$refs.signature.save('image/jpeg');
             this.$store.dispatch('storeConsentimiento', this.data)
             this.dialog = false;
-
         },
         seleccionarFoto(e) {
             this.$store.commit('SET_PHOTO', e);

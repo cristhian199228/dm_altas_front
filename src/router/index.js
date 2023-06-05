@@ -14,6 +14,12 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
+    component: ContainerView,
+    children: [
+      { path: '', component: FichasView, name: 'fichas.index' }
+      /* { path: 'nuevo', component: NuevaFicha, name: 'fichas.crear' },
+      { path: 'editar/:id_ficha', component: NuevaFicha, name: 'fichas.editar' } */
+    ],
     meta: { requiresAuth: true }
   },
   {
@@ -34,11 +40,12 @@ const routes = [
       { path: 'editar/:id_ficha', component: NuevaFicha, name: 'fichas.editar' } */
     ],
     meta: { requiresAuth: true }
-  }
- /*  {
+  },
+  {
     path: '*',
-    redirect: '/fichas'
-  }, */
+    redirect: '/fichas',
+    meta: { requiresAuth: true }
+  }
 ]
 
 const router = new VueRouter({

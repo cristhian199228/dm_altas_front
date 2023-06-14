@@ -6,9 +6,12 @@
           <v-icon>mdi-close</v-icon>
         </v-btn>
         <v-toolbar-title>CONSENTIMIENTO DESCANSO MEDICO</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn icon dark @click="print()">
+          <v-icon>mdi-printer</v-icon>
+        </v-btn>
       </v-toolbar>
-      <!-- <pdf v-for="i in numPages" :key="i" :src="src" :page="i"></pdf> -->
-      <vue-pdf-embed :source="source1" />
+      <vue-pdf-embed ref="pdfRef" :source="source1" />
     </v-card>
   </v-dialog>
 </template>
@@ -51,6 +54,9 @@ export default {
           this.source1 = url
         })
         .catch(() => { })
+    },
+    print() { 
+      this.$refs.pdfRef.print(100,'consentimiento.pdf',true)
     }
   },
 }

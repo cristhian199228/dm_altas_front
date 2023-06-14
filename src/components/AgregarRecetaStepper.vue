@@ -1,8 +1,9 @@
 <template>
   <v-card class="mb-12" height="200px" elevation="0">
-    <v-card-text v-if="medicamentos[1].evidencias.length > 0">
+    <v-card-text v-if="medicamentos[medicamentos.length -1].evidencias">
       SUS MEDICAMENTOS Y RECETAS HAN SIDO RECIBIDOS , EL AREA MEDICA SE PONDRA EN CONTACTO CON USTED PARA COORDINAR LOS
       SIGUIENTES PASOS.
+   
     </v-card-text>
     <v-card-text v-else>
       USTED ESTA CONSUMIENDO MEDICAMENTOS SIN RECETA , EL SOPORTE MEDICO SE CONTACTARA CON USTED PARA

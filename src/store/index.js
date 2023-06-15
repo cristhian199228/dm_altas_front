@@ -237,7 +237,7 @@ export default new Vuex.Store({
     },
     async storeMedicamento({ dispatch }, params) {
       try {
-        await axios.post(`/api/storeMedicamento/`, params)
+        await axios.post(`/api/storeMedicamento`, params)
         //commit('SHOW_SUCCESS_SNACKBAR', await res.data.message)
         console.log(params)
         dispatch('fetchMedicamentos', params.id_paciente)

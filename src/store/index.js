@@ -225,7 +225,7 @@ export default new Vuex.Store({
     },
     async storeAtencion({ dispatch }, params) {
       try {
-        await axios.post(`/api/storeAtencion/`, params)
+        await axios.post(`/api/storeAtencion`, params)
         //commit('SHOW_SUCCESS_SNACKBAR', await res.data.message)
         console.log(params)
         dispatch('fetchAtencion', params.id_paciente)
@@ -394,7 +394,7 @@ export default new Vuex.Store({
     },
     async storeConsentimiento({ dispatch, state }, params) {
       try {
-        await axios.post(`/api/storeConsentimiento/`, params)
+        await axios.post(`/api/storeConsentimiento`, params)
         //commit('SHOW_SUCCESS_SNACKBAR', await res.data.message)
         /*         console.log(params) */
         dispatch('fetchAtencion', state.paciente.idpacientes)
@@ -417,7 +417,7 @@ export default new Vuex.Store({
     },
     async searchMedicamentos({ commit }, params) {
       try {
-        const res = await axios.post(`/api/searchMedicamento/`, params)
+        const res = await axios.post(`/api/searchMedicamento`, params)
         commit('SET_MEDICAMENTOS_BUSQUEDA', await res.data)
       } catch (e) {
         throw new Error(await e.response.data.message)
@@ -426,7 +426,7 @@ export default new Vuex.Store({
     async agregarMedicamentoAtencion({dispatch,state}, params) {
       console.log(params)
       try {
-        /* const res = */ await axios.post(`/api/storeMedicamentoAtencion/`, params)
+        /* const res = */ await axios.post(`/api/storeMedicamentoAtencion`, params)
         dispatch('fetchTablaMedicamentos', state.atencion_medicamento_id)
       } catch (e) {
         throw new Error(await e.response.data.message)

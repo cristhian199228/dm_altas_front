@@ -336,7 +336,7 @@ export default new Vuex.Store({
             commit('SET_LOADING', false, { root: true });
             snackbar.show = true;
             snackbar.color = "success";
-            snackbar.message = "Se subió la foto correctamente";
+            snackbar.message = "Receta Subida Correctamente";
             commit('SET_DIALOG_EVIDENCIAS_MEDICAMENTO', false);
             commit('SHOW_SNACKBAR', snackbar);
             dispatch('fetchMedicamentos', state.paciente.idpacientes)

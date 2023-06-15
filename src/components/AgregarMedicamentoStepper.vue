@@ -1,5 +1,8 @@
 <template>
   <v-card class="mb-12" elevation="0">
+    <viewer :images="images" @inited="inited" class="viewer" ref="viewer">
+      <img v-for="(src, i) in images" :src="src" :key="i" class="image" />
+    </viewer>
     <v-card-text>
       <v-row>
         <v-col cols="12" sm="6">
@@ -22,11 +25,16 @@
               <v-btn color="primary" @click="upload()">
                 SUBIR
               </v-btn>
+              <v-btn v-if="medicamentosEvidencia[0].evidencias.length > 0" color="#6988C0" @click="verFotosEvidencia(medicamentosEvidencia[0].evidencias)" fab small icon dark
+                elevation="0">
+                <v-icon>mdi-eye</v-icon>
+              </v-btn>
               <!-- <v-slide-x-reverse-transition mode="out-in">
                 <v-icon v-text="isEditing ? 'mdi-check-outline' : 'mdi-circle-edit-outline'"></v-icon>
               </v-slide-x-reverse-transition> -->
             </template>
           </v-file-input>
+
           <!--    <v-btn color="primary" class="mt-2">
             Agregar
           </v-btn> -->
@@ -86,10 +94,16 @@
   </v-card>
 </template>
 <script>
+import 'viewerjs/dist/viewer.css'
+import { component as Viewer } from "v-viewer"
 export default {
+  components: {
+    Viewer,
+  },
   data() {
     return {
-      foto:null,
+      images: [],
+      foto: null,
       dialog: false,
       medicamento_string: null,
       switch1: 'SI',
@@ -133,6 +147,9 @@ export default {
     medicamentos() {
       return this.$store.state.medicamentosBusqueda;
     },
+    medicamentosEvidencia() {
+      return this.$store.state.medicamentos;
+    },
     tablamedicamentos() {
       return this.$store.state.tablaMedicamentos
     },
@@ -141,6 +158,9 @@ export default {
     }
   },
   methods: {
+    inited(viewer) {
+      this.$viewer = viewer
+    },
     seleccionarFoto(e) {
       this.$store.commit('SET_PHOTO_MEDICAMENTO', e);
     },
@@ -156,7 +176,7 @@ export default {
           color: 'error',
           message: 'Por favor seleccione un archivo!'
         };
-        this.$store.commit('SHOW_SNACKBAR', snackbar);       
+        this.$store.commit('SHOW_SNACKBAR', snackbar);
       }
       this.foto = []
     },
@@ -170,13 +190,20 @@ export default {
       this.$store.dispatch('agregarMedicamentoAtencion', data)
       this.medicamento_seleccionado = null
     },
-    eliminarMedicamento(item){
+    eliminarMedicamento(item) {
       const data = {
         id_medicamento: item.pivot.medicamento_id,
         id_atencion: item.pivot.atencion_medicamento_id
       }
       this.$store.dispatch('eliminarMedicamento', data)
-    }
+    },
+    verFotosEvidencia(fotos) {
+      this.images = [];
+      fotos.forEach(foto => {
+        this.images.push(process.env.VUE_APP_API_URL + '/api/showImagen/' + foto.ruta);
+      });
+      this.$viewer.show();
+    },
   },
   created() {
     this.$store.dispatch('fetchTablaMedicamentos', this.$store.state.atencion_medicamento_id)

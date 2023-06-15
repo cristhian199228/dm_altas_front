@@ -28,8 +28,8 @@
                 CONTACTO 2
               </v-card-title>
               <v-card-subtitle>
-                <p>Celular:</p>
-                <p>947528209</p>
+             <!--    <p>Celular:</p>
+                <p>947528209</p> -->
                 <p>Correo</p>
                 <p>dl.PE.altas@internationalsos.com</p>
               </v-card-subtitle>

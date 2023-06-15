@@ -7,37 +7,31 @@
       <v-row>
         <v-col cols="12" sm="6">
           Introduzca el nombre del medicamento ,si el medicamento no se encuentra en la lista presione Agregar.
-          <v-autocomplete v-model="medicamento_seleccionado" :loading="loading" :items="medicamentos"
-            :search-input.sync="search" item-text="descripcion" item-value="id" cache-items prepend-icon="mdi-medication"
-            class="mx-4" flat hide-no-data label="Medicamento">
-            <template v-slot:append-outer>
+          <v-row>
+            <v-col cols="12" sm="10">
+              <v-autocomplete v-model="medicamento_seleccionado" :loading="loading" :items="medicamentos"
+                :search-input.sync="search" item-text="descripcion" item-value="id" cache-items
+                prepend-icon="mdi-medication" class="" flat hide-no-data label="Medicamento">
+              </v-autocomplete>
+            </v-col>
+            <v-col cols="12" sm="2">
               <v-btn color="primary" @click="agregarMedicamento()">
                 Agregar
               </v-btn>
-              <!-- <v-slide-x-reverse-transition mode="out-in">
-                <v-icon v-text="isEditing ? 'mdi-check-outline' : 'mdi-circle-edit-outline'"></v-icon>
-              </v-slide-x-reverse-transition> -->
-            </template>
-          </v-autocomplete>
-          <v-file-input show-size ref="photo" label="Adjuntar Receta Medica" messages="Archivos admitidos: imagenes y pdf"
-            class="mx-4" accept="image/*,.pdf" @change="seleccionarFoto" v-model="foto">
-            <template v-slot:append-outer>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" sm="10">
+              <v-file-input show-size ref="photo" label="Adjuntar Receta" class="" accept="image/*,.pdf"
+                @change="seleccionarFoto" v-model="foto">
+              </v-file-input>
+            </v-col>
+            <v-col cols="12" sm="2">
               <v-btn color="primary" @click="upload()">
                 SUBIR
               </v-btn>
-              <v-btn v-if="medicamentosEvidencia[0].evidencias.length > 0" color="#6988C0" @click="verFotosEvidencia(medicamentosEvidencia[0].evidencias)" fab small icon dark
-                elevation="0">
-                <v-icon>mdi-eye</v-icon>
-              </v-btn>
-              <!-- <v-slide-x-reverse-transition mode="out-in">
-                <v-icon v-text="isEditing ? 'mdi-check-outline' : 'mdi-circle-edit-outline'"></v-icon>
-              </v-slide-x-reverse-transition> -->
-            </template>
-          </v-file-input>
-
-          <!--    <v-btn color="primary" class="mt-2">
-            Agregar
-          </v-btn> -->
+            </v-col>
+          </v-row>
         </v-col>
         <v-col cols="12" sm="6">
           <v-card-subtitle>
@@ -70,26 +64,12 @@
               </div>
             </template>
           </v-data-table>
-          <!--           <span class="pt-4">NO REPORTABLE: Medicamentos que no impacta en fatiga y somnolencia.</span><br>
-          <span class="pt-4">NO REPORTABLE: Medicamentos que no impactan en conducción y operación de equipos</span><br> -->
-          <span class="pt-4">NO REPORTABLE: El consumo de este medicamento no impacta en sus actividad regulares.</span>
+          <div class="mt-4">
+            <span class="mt-4">NO REPORTABLE: El consumo de este medicamento no impacta en sus actividades
+              regulares.</span>
+          </div>
         </v-col>
       </v-row>
-      <v-dialog v-model="dialog" persistent max-width="400">
-        <v-card>
-          <v-card-title class="text-h5">
-            MEDICAMENTOS SIN RECETA
-          </v-card-title>
-          <v-card-text>USTED ESTA CONSUMIENDO MEDICAMENTOS SIN RECETA , EL SOPORTE MEDICO SE CONTACTARA CON USTED PARA
-            DARLE INDICACIONES .</v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="green darken-1" text @click="dialog = false">
-              DE ACUERDO
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
     </v-card-text>
   </v-card>
 </template>
@@ -104,7 +84,6 @@ export default {
     return {
       images: [],
       foto: null,
-      dialog: false,
       medicamento_string: null,
       switch1: 'SI',
       search: null,

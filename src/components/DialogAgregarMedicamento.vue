@@ -24,7 +24,7 @@
                     </v-stepper-step>
                     <v-divider></v-divider>
                     <v-stepper-step :complete="e1 > 2" step="2">
-                     Validación
+                      Validación
                     </v-stepper-step>
                     <v-divider></v-divider>
                     <v-stepper-step step="3">
@@ -34,27 +34,41 @@
                   <v-stepper-items>
                     <v-stepper-content step="1">
                       <AgregarMedicamentoStepper />
-                      <v-btn color="primary" @click="e1 = 2">
-                        Siguiente
-                      </v-btn>
+                      <v-card transparent>
+                        <v-card-actions>
+                          <v-spacer></v-spacer> <v-btn color="primary" @click="e1 = 2">
+                            Siguiente
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
                     </v-stepper-content>
                     <v-stepper-content step="2">
                       <AgregarRecetaStepper />
-                      <v-btn @click="e1 = 1">
-                        Anterior
-                      </v-btn>
-                      <v-btn color="primary" @click="e1 = 3">
-                        Siguiente
-                      </v-btn>
+                      <v-card>
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn @click="e1 = 1">
+                            Anterior
+                          </v-btn>
+                          <v-btn color="primary" @click="e1 = 3">
+                            Siguiente
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
                     </v-stepper-content>
                     <v-stepper-content step="3">
-                     <AgregarObservacionesStepper />
-                      <v-btn @click="e1 = 2">
-                        Anterior
-                      </v-btn>
-                      <v-btn color="primary" @click="cerrarDialogMedicamentos()">
-                        Guardar
-                      </v-btn>
+                      <AgregarObservacionesStepper />
+                      <v-card>
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn @click="e1 = 2">
+                            Anterior
+                          </v-btn>
+                          <v-btn color="primary" @click="cerrarDialogMedicamentos()">
+                            Guardar
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
                     </v-stepper-content>
                   </v-stepper-items>
                 </v-stepper>
@@ -98,9 +112,9 @@ export default {
       if (index >= 0)
         this.friends.splice(index, 1);
     },
-    cerrarDialogMedicamentos(){
+    cerrarDialogMedicamentos() {
       this.$store.commit("SET_DIALOG_AGREGAR_MEDICAMENTO", false);
-      this.e1=1;
+      this.e1 = 1;
     }
   },
   components: { AgregarMedicamentoStepper, AgregarRecetaStepper, AgregarObservacionesStepper }

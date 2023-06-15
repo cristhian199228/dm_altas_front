@@ -1,5 +1,5 @@
 <template>
-  <v-main class="grey lighten-3 mt-4">
+  <div class="mt-2">
     <viewer :images="images" @inited="inited" class="viewer" ref="viewer">
       <img v-for="(src, i) in images" :src="src" :key="i" class="image" />
     </viewer>
@@ -109,7 +109,7 @@
         </transition>
       </template>
     </v-tour>
-  </v-main>
+  </div>
 </template>
 <script>
 import 'viewerjs/dist/viewer.css'

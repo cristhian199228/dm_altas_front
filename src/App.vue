@@ -4,10 +4,12 @@
       {{ snackbar.message }}
     </v-snackbar>
     <v-app-bar app color="#232762" dark>
-      <v-toolbar-title><h4>PORTAL DE DECLARACION DE MEDICAMENTOS</h4></v-toolbar-title>
+      <v-toolbar-title><h4>ISOS -SALUD</h4></v-toolbar-title>
       <v-spacer></v-spacer>
     </v-app-bar>
+    <v-main>
     <router-view />
+    </v-main>
   </v-app>
 </template>
 <script>

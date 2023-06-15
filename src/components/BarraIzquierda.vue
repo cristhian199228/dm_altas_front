@@ -1,9 +1,11 @@
 <template>
-  <v-card class="mx-auto "  max-width="300" elevation="0">
+  <v-card class="mx-auto " max-width="300" elevation="0">
     <v-toolbar dense color="#232762" dark>
       <v-spacer></v-spacer>
       <v-toolbar-title>
-        <h5>DATOS DEL TRABAJADOR</h5>
+        <h5>DATOS DEL TRABAJADOR<v-btn class="mx-4"  x-small color="orange">
+            <v-icon small>mdi-pencil</v-icon>
+          </v-btn></h5>
       </v-toolbar-title>
       <v-spacer></v-spacer>
     </v-toolbar>
@@ -11,7 +13,7 @@
       <v-card-actions>
         <v-btn class="mx-2" absolute bottom right dark small color="#EF820F">
           <v-icon dark>
-            mdi-pencil
+            mdi-cloud-upload
           </v-icon>
         </v-btn>
       </v-card-actions>
@@ -42,17 +44,20 @@
       <v-spacer></v-spacer>
     </v-toolbar>
     <v-card-text>
-      <v-text-field dense label="NOMBRES" value="AURELIO VARGAS"></v-text-field>
-      <v-text-field dense label="PARENTESCO" value="PADRE"></v-text-field>
-      <v-text-field dense label="CELULAR" value="914158410"></v-text-field>
+      <v-text-field dense label="NOMBRES"></v-text-field>
+      <v-text-field dense label="PARENTESCO"></v-text-field>
+      <v-text-field dense label="CELULAR"></v-text-field>
     </v-card-text>
-    <v-card-actions>
+    <!-- <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn outlined medium color="#232762" dark>
+      <v-btn outlined medium color="#232762" >
+        Editar
+      </v-btn>
+      <v-btn outlined medium color="orange" dark>
         Guardar
       </v-btn>
       <v-spacer></v-spacer>
-    </v-card-actions>
+    </v-card-actions> -->
   </v-card>
 </template>
 <script>

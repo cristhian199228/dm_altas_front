@@ -167,7 +167,7 @@ export default new Vuex.Store({
     },
     async loginInvitados({ commit }, data) {
       try {
-        const res = await axios.post(`/api/v1/loginInvitados`, data)
+        const res = await axios.post(`/api/loginInvitados`, data)
         commit('SHOW_SUCCESS_SNACKBAR', await res.data.message)
         commit('SET_PACIENTE', await res.data.data)
         commit('SET_PACIENTE', await res.data.data)

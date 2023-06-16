@@ -16,10 +16,16 @@ export default new Vuex.Store({
     dialogEvidencias: false,
     dialogEvidenciasMedicamento: false,
     dialogAgregarMedicamento: false,
-    tablaMedicamentos:[],
+    tablaMedicamentos: [],
     photo: undefined,
     photo_medicamento: undefined,
-    paciente: {},
+    paciente: {
+      contactos_emergencia: {
+        nombre_completo: null,
+        celular: null,
+        parentesco: null
+      }
+    },
     atencion_id: null,
     atencion_medicamento_id: null,
     consentimiento_id: null,
@@ -58,6 +64,9 @@ export default new Vuex.Store({
         }
       }
     ],
+    validadoMedicamentos: false,
+    validadoRequiereReceta:false,
+    validadoTieneEvidencias:false
   },
   getters: {
     fichas: (state, getters) => getters.esInvitado ? [] : state.data.data,
@@ -145,6 +154,18 @@ export default new Vuex.Store({
       state.snackbar.message = snackbar.message;
       state.snackbar.color = snackbar.color;
     },
+    SET_CONTACTO_EMERGENCIA(state, data) {
+      state.paciente.contactos_emergencia[0] = data
+    },
+    SET_VALIDADO_MEDICAMENTOS(state, data) {
+      state.validadoMedicamentos= data
+    },
+    SET_VALIDADO_REQUIERE_RECETA(state, data) {
+      state.validadoRequiereReceta = data
+    },
+    SET_VALIDADO_TIENE_EVIDENCIAS(state, data) {
+      state.validadoTieneEvidencias = data
+    },
   },
   actions: {
     async logout({ commit }) {
@@ -214,11 +235,17 @@ export default new Vuex.Store({
         throw new Error(await e.response.data.message)
       }
     },
-    async fetchMedicamentos({ commit }, id_paciente) {
+    async fetchMedicamentos({ commit,state }, id_paciente) {
       try {
         const res = await axios.get(`/api/fetchMedicamento/${id_paciente}`)
         //console.log(res)
         commit('SET_MEDICAMENTOS', res.data)
+        const indice = res.data.findIndex((elemento) => elemento.id === state.atencion_medicamento_id);
+        if (indice !== -1) {
+          console.log(res.data[indice])
+          if(res.data[indice].evidencias.length > 0) { commit('SET_VALIDADO_TIENE_EVIDENCIAS', true)}
+          else {commit('SET_VALIDADO_TIENE_EVIDENCIAS', false)}
+        }
       } catch (e) {
         throw new Error(await e.response.data.message)
       }
@@ -235,15 +262,15 @@ export default new Vuex.Store({
         throw new Error(await e.response.data.message)
       }
     },
-    async storeMedicamento({ dispatch }, params) {
+    async storeMedicamento({ dispatch, commit }, params) {
       try {
-        await axios.post(`/api/storeMedicamento`, params)
-        //commit('SHOW_SUCCESS_SNACKBAR', await res.data.message)
+        const res = await axios.post(`/api/storeMedicamento`, params)
+        commit('SHOW_SUCCESS_SNACKBAR', await res.data.message)
         console.log(params)
         dispatch('fetchMedicamentos', params.id_paciente)
         //return await res.data.data.id_temp_fichapaciente
       } catch (e) {
-        // commit('SHOW_ERROR_SNACKBAR', await e.response.data.message)
+        commit('SHOW_ERROR_SNACKBAR', await e.response.data.message)
         throw new Error(await e.response.data.message)
       }
     },
@@ -423,7 +450,7 @@ export default new Vuex.Store({
         throw new Error(await e.response.data.message)
       }
     },
-    async agregarMedicamentoAtencion({dispatch,state}, params) {
+    async agregarMedicamentoAtencion({ dispatch, state }, params) {
       console.log(params)
       try {
         /* const res = */ await axios.post(`/api/storeMedicamentoAtencion`, params)
@@ -432,16 +459,18 @@ export default new Vuex.Store({
         throw new Error(await e.response.data.message)
       }
     },
-    async fetchTablaMedicamentos({ commit }, id_atencion) {
+    async fetchTablaMedicamentos({ dispatch,commit,state }, id_atencion) {
       try {
         const res = await axios.get(`/api/fetchTablaMedicamentos/${id_atencion}`)
         //console.log(res)
         commit('SET_TABLA_MEDICAMENTOS', res.data)
+        dispatch('fetchMedicamentos', state.paciente.idpacientes)
       } catch (e) {
         throw new Error(await e.response.data.message)
       }
+
     },
-    async eliminarMedicamento({dispatch,state}, params) {
+    async eliminarMedicamento({ dispatch, state }, params) {
       try {
         await axios.post(`/api/eliminarMedicamento`, params)
         dispatch('fetchTablaMedicamentos', state.atencion_medicamento_id)
@@ -449,6 +478,26 @@ export default new Vuex.Store({
         throw new Error(await e.response.data.message)
       }
     },
+    async storeDatosPaciente({ commit }, params) {
+      try {
+        const res = await axios.post(`/api/storeDatosPaciente`, params)
+        commit('SET_PACIENTE', await res.data.paciente)
+        commit('SET_CONTACTO_EMERGENCIA', await res.data.paciente.contactos_emergencia[0])
+        window.localStorage.setItem('digitalizacion-paciente', JSON.stringify(res.data.paciente))
+        commit('SHOW_SUCCESS_SNACKBAR', await res.data.message)
+      } catch (e) {
+        throw new Error(await e.response.data.message)
+      }
+    },
+    async cambiarTieneReceta({ dispatch, state }, params) {
+      try {
+        await axios.post(`/api/cambiarTieneReceta`, params)
+
+        dispatch('fetchTablaMedicamentos', state.atencion_medicamento_id)
+      } catch (e) {
+        throw new Error(await e.response.data.message)
+      }
+    }
   },
   modules: {
   }

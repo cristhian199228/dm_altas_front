@@ -1,13 +1,22 @@
 <template>
   <v-card class="mb-12" height="200px" elevation="0">
-    <v-card-text v-if="medicamentos[medicamentos.length -1].evidencias.length > 0">
+  <!--   <v-card-text v-if="validadoTieneEvidencias">
       SUS MEDICAMENTOS Y RECETAS HAN SIDO RECIBIDOS , EL AREA MEDICA SE PONDRA EN CONTACTO CON USTED PARA COORDINAR LOS
       SIGUIENTES PASOS.
     </v-card-text>
     <v-card-text v-else>
       USTED ESTA CONSUMIENDO MEDICAMENTOS SIN RECETA , EL SOPORTE MEDICO SE CONTACTARA CON USTED PARA
       DARLE INDICACIONES.
+    </v-card-text> -->
+
+
+    <v-card-text >
+      USTED ESTA TOMANDO MEDICAMENTOS CON RECETA Y SIN RECETA EL SOPORTE MEDICO SE CONTACTARA CON USTED PARA DARLE INDICACIONES
     </v-card-text>
+   <!--  <v-card-text >
+      SUS MEDICAMENTOS Y RECETAS HAN SIDO RECIBIDOS , EL AREA MEDICA SE PONDRA EN CONTACTO CON USTED PARA COORDINAR LOS
+      SIGUIENTES PASOS.
+    </v-card-text> -->
   </v-card>
 </template>
 <script>
@@ -25,6 +34,9 @@ export default {
   computed: {
     medicamentos() {
       return this.$store.state.medicamentos
+    },
+    validadoTieneEvidencias(){
+      return this.$store.state.validadoTieneEvidencias
     },
   },
   methods: {

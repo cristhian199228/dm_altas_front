@@ -105,6 +105,7 @@ export default {
       return this.$store.state.steps
     }
   },
+
   methods: {
     nuevaAtencion() {
       this.$tours['myTour'].nextStep();

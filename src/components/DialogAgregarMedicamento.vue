@@ -36,7 +36,8 @@
                       <AgregarMedicamentoStepper />
                       <v-card transparent>
                         <v-card-actions>
-                          <v-spacer></v-spacer> <v-btn color="primary" @click="e1 = 2">
+                          <v-spacer></v-spacer>
+                           <v-btn color="primary" :disabled="!validadoMedicamentos" @click="e1 = 2">
                             Siguiente
                           </v-btn>
                         </v-card-actions>
@@ -97,10 +98,25 @@ export default {
         setTimeout(() => (this.isUpdating = false), 3000);
       }
     },
+    validadoTieneEvidencias: function (newValue) {
+     console.log(newValue)
+     if(newValue == true && this.validadoRequiereReceta == true) this.validadoMedicamentos =true
+    },
   },
   computed: {
     dialog() {
       return this.$store.state.dialogAgregarMedicamento;
+    },
+    validadoMedicamentos: {
+      get() { return this.$store.state.validadoMedicamentos },
+      set(val) { this.$store.commit('SET_VALIDADO_MEDICAMENTOS', val) }
+    },
+    validadoTieneEvidencias(){
+      return this.$store.state.validadoTieneEvidencias
+    },
+    validadoRequiereReceta: {
+      get() { return this.$store.state.validadoRequiereReceta },
+      set(val) { this.$store.commit('SET_VALIDADO_REQUIERE_RECETA', val) }
     }
   },
   methods: {
@@ -114,6 +130,7 @@ export default {
     },
     cerrarDialogMedicamentos() {
       this.$store.commit("SET_DIALOG_AGREGAR_MEDICAMENTO", false);
+      this.$store.commit('SHOW_SUCCESS_SNACKBAR', 'Los medicamentos se guardaron exitosamente,')
       this.e1 = 1;
     }
   },

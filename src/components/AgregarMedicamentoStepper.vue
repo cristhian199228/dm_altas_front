@@ -22,13 +22,17 @@
           </v-row>
           <v-row>
             <v-col cols="12" sm="10">
-              <v-file-input show-size ref="photo" label="Adjuntar Receta" class="" accept="image/*,.pdf"
-                @change="seleccionarFoto" v-model="foto">
+              <v-file-input :disabled="!validadoRequiereReceta" show-size ref="photo" label="Adjuntar Receta" class=""
+                accept="image/*,.pdf" @change="seleccionarFoto" v-model="foto">
               </v-file-input>
             </v-col>
             <v-col cols="12" sm="2">
               <v-btn color="primary" @click="upload()">
                 SUBIR
+              </v-btn>
+              <v-btn v-if="medicamentosEvidencia[1].evidencias.length > 0" color="#6988C0" @click="verFotosEvidencia(medicamentosEvidencia[1].evidencias)" fab small icon dark
+                elevation="0">
+                <v-icon>mdi-eye</v-icon>
               </v-btn>
             </v-col>
           </v-row>
@@ -50,8 +54,8 @@
             <template v-slot:no-data>
               Ningun medicamento ha sido agregado
             </template>
-            <template v-slot:[`item.receta`]="{}">
-              <v-switch v-model="tiene_receta" inset small></v-switch>
+            <template v-slot:[`item.pivot.tiene_receta`]="{ item }">
+              <v-switch v-model="item.pivot.tiene_receta" @change="cambiarTieneReceta(item)" inset small></v-switch>
             </template>
             <template v-slot:[`item.descripcion`]="{ item }">
               <div v-if="item.reportable == 1">
@@ -96,16 +100,16 @@ export default {
           sortable: false,
           value: "descripcion",
         },
-        { text: "Tiene Receta", value: "receta", sortable: false },
+        { text: "Tiene Receta", value: "pivot.tiene_receta", sortable: false },
         { text: "Acciones", value: "actions", sortable: false },
       ],
+      receta: false
     }
   },
   watch: {
     search(val) {
       if (val.length > 2) {
         this.loading = true
-        /* if (this.loading) return */
         const data = {
           valor: val
         };
@@ -113,14 +117,22 @@ export default {
         this.loading = false
         this.medicamento_string = val
       }
-
-      /* if (this.medicamentos.length > 0) return 'hola'
-      
-     
-      console.log(val.length) */
-      //
-
     },
+    tablamedicamentos: function (newValue) {
+
+      this.validadoRequiereReceta = false
+      // Acciones a realizar cuando cambie 'computedProp'
+      //console.log('La propiedad calculada "computedProp" ha cambiado. Nuevo valor:', newValue);
+      let me = this;
+      newValue.forEach(function (element) {
+        //console.log(element);
+        if (element.pivot.tiene_receta == 1) {
+          me.validadoRequiereReceta = true
+          return
+        }
+      });
+    },
+
   },
   computed: {
     medicamentos() {
@@ -134,7 +146,18 @@ export default {
     },
     photo() {
       return this.$store.state.photo_medicamento
-    }
+    },
+    validadoMedicamentos: {
+      get() { return this.$store.state.validadoMedicamentos },
+      set(val) { this.$store.commit('SET_VALIDADO_MEDICAMENTOS', val) }
+    },
+    validadoRequiereReceta: {
+      get() { return this.$store.state.validadoRequiereReceta },
+      set(val) { this.$store.commit('SET_VALIDADO_REQUIERE_RECETA', val) }
+    },
+    validadoTieneEvidencias(){
+      return this.$store.state.validadoTieneEvidencias
+    },
   },
   methods: {
     inited(viewer) {
@@ -183,6 +206,19 @@ export default {
       });
       this.$viewer.show();
     },
+    cambiarTieneReceta(val) {
+      const data = {
+        id_medicamento: val.id,
+        id_atencion: val.pivot.atencion_medicamento_id,
+        tiene_receta: val.pivot.tiene_receta
+      }
+      this.$store.dispatch('cambiarTieneReceta', data)
+      //console.log(this.tablamedicamentos)
+
+
+      /*  if(this.tablamedicamentos.) */
+    }
+
   },
   created() {
     this.$store.dispatch('fetchTablaMedicamentos', this.$store.state.atencion_medicamento_id)

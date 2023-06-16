@@ -136,6 +136,12 @@ export default {
       if (me.contador_receta > 0) {
         me.validadoRequiereReceta = true
       }
+      if (me.contador_receta == 0 && newValue.length > 0) {
+        me.validadoMedicamentos = true
+      }
+      if (me.contador_receta == 0 && newValue.length == 0) {
+        me.validadoMedicamentos = false
+      }
       this.tablaMedicamentosTieneReceta = me.contador_receta
       this.tablaMedicamentosTieneTotal = newValue.length
       /* if (me.contador_receta == 0) {

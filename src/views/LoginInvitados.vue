@@ -18,11 +18,11 @@
       </validation-observer>
       <validation-observer ref="observer" v-slot="{  }">
         <validation-provider v-slot="{ errors }" name="Ubigeo" rules="required|min:6|max:6">
-          <v-text-field v-model.trim="form.ubigeo" :error-messages="errors" label="Ubigeo *"></v-text-field>
+          <v-text-field v-model.trim="form.ubigeo" :error-messages="errors" label="Ubigeo de Nacimiento *"></v-text-field>
         </validation-provider>
         <p class="caption">(*) Campos obligatorios</p>
       </validation-observer>
-       <v-menu
+   <!--     <v-menu
           v-model="menu"
           :close-on-content-click="false"
           :nudge-right="40"
@@ -50,7 +50,7 @@
             max="2035-01-01"
             min="1930-01-01"
           ></v-date-picker>
-        </v-menu>
+        </v-menu> -->
       <v-menu
           v-model="menu_nacimiento"
           :close-on-content-click="false"
@@ -98,7 +98,7 @@ export default {
       form: {
         numero_documento: null,
         fecha_nacimiento: null,
-        invitado: true,
+        ubigeo: null,
       },
       menu: false,
       menu_nacimiento:false,

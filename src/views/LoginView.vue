@@ -11,8 +11,8 @@
         <p class="display-1 mt-5 text-center">ISOS SALUD</p>
         <v-tabs>
           <v-tab exact to="/login">Peruanos</v-tab>
-         <!--  <v-tab exact to="/login/extranjeros">Extranjeros</v-tab>
-          <v-tab exact to="/login/invitados">Invitados</v-tab> -->
+          <v-tab exact to="/login/extranjeros">Extranjeros</v-tab>
+          <v-tab exact to="/login/invitados">Invitados</v-tab>
         </v-tabs>
         <router-view></router-view>
       </v-card>

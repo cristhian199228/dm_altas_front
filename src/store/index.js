@@ -64,6 +64,8 @@ export default new Vuex.Store({
         }
       }
     ],
+    tablaMedicamentosTieneReceta:0,
+    tablaMedicamentosTieneTotal:0,
     validadoMedicamentos: false,
     validadoRequiereReceta:false,
     validadoTieneEvidencias:false
@@ -166,6 +168,12 @@ export default new Vuex.Store({
     SET_VALIDADO_TIENE_EVIDENCIAS(state, data) {
       state.validadoTieneEvidencias = data
     },
+    SET_TABLA_MEDICAMENTOS_TIENE_RECETA(state, data) {
+      state.tablaMedicamentosTieneReceta = data
+    },
+    SET_TABLA_MEDICAMENTOS_TIENE_TOTAL(state, data) {
+      state.tablaMedicamentosTieneTotal = data
+    },
   },
   actions: {
     async logout({ commit }) {
@@ -174,7 +182,7 @@ export default new Vuex.Store({
     },
     async login({ commit }, data) {
       try {
-        const res = await axios.post(`/api/v1/loginFechaNacimiento`, data)
+        const res = await axios.post(`/api/loginFechaNacimiento`, data)
         commit('SHOW_SUCCESS_SNACKBAR', await res.data.message)
         commit('SET_PACIENTE', await res.data.data)
         commit('SET_EXTRANJERO', 1)

@@ -27,13 +27,19 @@
               </v-file-input>
             </v-col>
             <v-col cols="12" sm="2">
-              <v-btn color="primary" @click="upload()">
+              <v-btn color="primary" :disabled="!validadoRequiereReceta" @click="upload()">
                 SUBIR
               </v-btn>
-              <v-btn v-if="medicamentosEvidencia[1].evidencias.length > 0" color="#6988C0" @click="verFotosEvidencia(medicamentosEvidencia[1].evidencias)" fab small icon dark
-                elevation="0">
-                <v-icon>mdi-eye</v-icon>
-              </v-btn>
+              <div v-if="medicamentosEvidencia[0].evidencias.length > 0">
+                <v-btn color="#6988C0" @click="verFotosEvidencia(medicamentosEvidencia[0].evidencias)" fab small icon dark
+                  elevation="0">
+                  <v-icon>mdi-eye</v-icon>
+                </v-btn>
+                <v-btn color="#6988C0" @click="verFotosEvidencia(medicamentosEvidencia[0].evidencias)" fab small icon dark
+                  elevation="0">
+                  <v-icon>mdi-delete</v-icon>
+                </v-btn>
+              </div>
             </v-col>
           </v-row>
         </v-col>
@@ -103,7 +109,7 @@ export default {
         { text: "Tiene Receta", value: "pivot.tiene_receta", sortable: false },
         { text: "Acciones", value: "actions", sortable: false },
       ],
-      receta: false
+      contador_receta: 0
     }
   },
   watch: {
@@ -119,18 +125,22 @@ export default {
       }
     },
     tablamedicamentos: function (newValue) {
-
+      this.contador_receta = 0
       this.validadoRequiereReceta = false
-      // Acciones a realizar cuando cambie 'computedProp'
-      //console.log('La propiedad calculada "computedProp" ha cambiado. Nuevo valor:', newValue);
       let me = this;
       newValue.forEach(function (element) {
-        //console.log(element);
         if (element.pivot.tiene_receta == 1) {
-          me.validadoRequiereReceta = true
-          return
+          me.contador_receta++
         }
       });
+      if (me.contador_receta > 0) {
+        me.validadoRequiereReceta = true
+      }
+      this.tablaMedicamentosTieneReceta = me.contador_receta
+      this.tablaMedicamentosTieneTotal = newValue.length
+      /* if (me.contador_receta == 0) {
+        me.validadoMedicamentos = false
+      } */
     },
 
   },
@@ -147,6 +157,20 @@ export default {
     photo() {
       return this.$store.state.photo_medicamento
     },
+    tablaMedicamentosTieneReceta: {
+      get() { return this.$store.state.tablaMedicamentosTieneReceta },
+      set(val) { this.$store.commit('SET_TABLA_MEDICAMENTOS_TIENE_RECETA', val) }
+    },
+    tablaMedicamentosTieneTotal: {
+      get() { return this.$store.state.tablaMedicamentosTieneTotal},
+      set(val) { this.$store.commit('SET_TABLA_MEDICAMENTOS_TIENE_TOTAL', val) }
+    },
+   /*  tablaMedicamentosTieneReceta() {
+      return this.$store.state.tablaMedicamentosTieneReceta
+    },
+    tablaMedicamentosTieneTotal() {
+      return this.$store.state.tablaMedicamentosTieneTotal
+    }, */
     validadoMedicamentos: {
       get() { return this.$store.state.validadoMedicamentos },
       set(val) { this.$store.commit('SET_VALIDADO_MEDICAMENTOS', val) }
@@ -155,7 +179,7 @@ export default {
       get() { return this.$store.state.validadoRequiereReceta },
       set(val) { this.$store.commit('SET_VALIDADO_REQUIERE_RECETA', val) }
     },
-    validadoTieneEvidencias(){
+    validadoTieneEvidencias() {
       return this.$store.state.validadoTieneEvidencias
     },
   },

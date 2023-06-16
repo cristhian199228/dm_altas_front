@@ -37,7 +37,7 @@
                       <v-card transparent>
                         <v-card-actions>
                           <v-spacer></v-spacer>
-                           <v-btn color="primary" :disabled="!validadoMedicamentos" @click="e1 = 2">
+                          <v-btn color="primary" :disabled="!validadoMedicamentos" @click="e1 = 2">
                             Siguiente
                           </v-btn>
                         </v-card-actions>
@@ -99,8 +99,8 @@ export default {
       }
     },
     validadoTieneEvidencias: function (newValue) {
-     console.log(newValue)
-     if(newValue == true && this.validadoRequiereReceta == true) this.validadoMedicamentos =true
+      console.log(newValue)
+      if (newValue == true && this.validadoRequiereReceta == true) this.validadoMedicamentos = true
     },
   },
   computed: {
@@ -111,13 +111,17 @@ export default {
       get() { return this.$store.state.validadoMedicamentos },
       set(val) { this.$store.commit('SET_VALIDADO_MEDICAMENTOS', val) }
     },
-    validadoTieneEvidencias(){
+    validadoTieneEvidencias() {
       return this.$store.state.validadoTieneEvidencias
     },
     validadoRequiereReceta: {
       get() { return this.$store.state.validadoRequiereReceta },
       set(val) { this.$store.commit('SET_VALIDADO_REQUIERE_RECETA', val) }
-    }
+    },
+    tablaMedicamentosTieneTotal: {
+      get() { return this.$store.state.tablaMedicamentosTieneTotal},
+      set(val) { this.$store.commit('SET_TABLA_MEDICAMENTOS_TIENE_TOTAL', val) }
+    },
   },
   methods: {
     close() {
@@ -133,6 +137,9 @@ export default {
       this.$store.commit('SHOW_SUCCESS_SNACKBAR', 'Los medicamentos se guardaron exitosamente,')
       this.e1 = 1;
     }
+  },
+  async mounted() {
+    if (this.validadoTieneEvidencias && this.tablaMedicamentosTieneTotal >0 ) this.validadoMedicamentos = true
   },
   components: { AgregarMedicamentoStepper, AgregarRecetaStepper, AgregarObservacionesStepper }
 }

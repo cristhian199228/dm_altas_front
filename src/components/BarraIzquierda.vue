@@ -44,10 +44,18 @@
       </v-toolbar-title>
       <v-spacer></v-spacer>
     </v-toolbar>
-    <v-card-text>
-      <v-text-field :disabled="!editar" dense v-model="paciente.contactos_emergencia[0].nombre_completo" label="NOMBRES"></v-text-field>
-      <v-text-field :disabled="!editar" dense v-model="paciente.contactos_emergencia[0].parentesco" label="PARENTESCO"></v-text-field>
-      <v-text-field :disabled="!editar" dense v-model="paciente.contactos_emergencia[0].celular" label="CELULAR"></v-text-field>
+    <v-card-text v-if="paciente.contactos_emergencia[0]">
+      <v-text-field :disabled="!editar" dense v-model="paciente.contactos_emergencia[0].nombre_completo"
+        label="NOMBRES"></v-text-field>
+      <v-text-field :disabled="!editar" dense v-model="paciente.contactos_emergencia[0].parentesco"
+        label="PARENTESCO"></v-text-field>
+      <v-text-field :disabled="!editar" dense v-model="paciente.contactos_emergencia[0].celular"
+        label="CELULAR"></v-text-field>
+    </v-card-text>
+    <v-card-text v-else>
+      <v-text-field :disabled="!editar" v-model="contacto_nombres" dense label="NOMBRES"></v-text-field>
+      <v-text-field :disabled="!editar" v-model="contacto_parentesco" dense label="PARENTESCO"></v-text-field>
+      <v-text-field :disabled="!editar" v-model="contacto_celular" dense label="CELULAR"></v-text-field>
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
@@ -65,7 +73,13 @@
 export default {
   name: 'BarraDerecha',
   data: () => ({
-    editar: false
+    editar: false,
+    contacto_nombres: null,
+    contacto_parentesco: null,
+    contacto_celular: null,
+    nombre_completo: null,
+    parentesco: null,
+    celular: null,
   }),
   computed: {
     paciente() {
@@ -83,14 +97,26 @@ export default {
       this.editar = true
     },
     async guardarPaciente() {
+      if (this.paciente.contactos_emergencia[0]) {
+        this.nombre_completo = this.paciente.contactos_emergencia[0].nombre_completo
+        this.parentesco = this.paciente.contactos_emergencia[0].parentesco
+        this.celular = this.paciente.contactos_emergencia[0].celular
+
+      }
+      else {
+        this.nombre_completo = this.contacto_nombres
+        this.parentesco = this.contacto_parentesco
+        this.celular = this.contacto_celular
+
+      }
       const data = {
         id_paciente: this.paciente.idpacientes,
         nro_registro: this.paciente.nro_registro,
         celular: this.paciente.celular,
         puesto: this.paciente.puesto,
-        nombre_contacto: this.paciente.contactos_emergencia[0].nombre_completo,
-        parentesco_contacto: this.paciente.contactos_emergencia[0].parentesco,
-        celular_contacto: this.paciente.contactos_emergencia[0].celular,
+        nombre_contacto: this.nombre_completo,
+        parentesco_contacto: this.parentesco,
+        celular_contacto: this.celular,
       }
       await this.$store.dispatch('storeDatosPaciente', data);
       this.editar = false

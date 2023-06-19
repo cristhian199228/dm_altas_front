@@ -4,7 +4,7 @@
       {{ snackbar.message }}
     </v-snackbar>
     <v-app-bar app color="#232762" dark>
-      <v-toolbar-title><h4>ISOS -SALUD -</h4></v-toolbar-title>
+      <v-toolbar-title><h4>ISOS -SALUD</h4></v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn
       @click="salir()"

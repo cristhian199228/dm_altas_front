@@ -23,7 +23,7 @@
           <v-row>
             <v-col cols="12" sm="10">
               <v-file-input :disabled="!validadoRequiereReceta" show-size ref="photo" label="Adjuntar Receta" class=""
-                accept="image/*,.pdf" @change="seleccionarFoto" v-model="foto">
+                accept="image/*" @change="seleccionarFoto" v-model="foto">
               </v-file-input>
             </v-col>
             <v-col cols="12" sm="2">

@@ -4,11 +4,11 @@
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
     <v-card-text>
-      <!-- <v-alert type="warning" outlined>
+      <v-alert type="warning" outlined>
         Declaro que no cuento con los datos para el ingreso regular al portal de fichas digitales, autorizo el uso de la
         información que registraré
-        en este formulario con el fin de procesarla para mi tamizaje de Covid19.
-      </v-alert> -->
+        en este formulario con el fin de procesarla.
+      </v-alert>
       <validation-observer ref="observer" v-slot="{  }">
         <validation-provider v-slot="{ errors }" name="número de documento" rules="required|min:8">
           <v-text-field v-model.trim="form.numero_documento" :error-messages="errors" label="Número de documento *">

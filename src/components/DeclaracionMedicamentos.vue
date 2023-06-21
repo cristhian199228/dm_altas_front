@@ -16,7 +16,7 @@
       </v-btn>
     </v-toolbar>
     <v-card-text>
-      <v-data-table :headers="headers_medicamentos" :items="medicamentos" hide-default-footer id="v-step-1"
+      <v-data-table :headers="headers_medicamentos" :items="medicamentos" hide-default-footer  id="v-step-1"
         class="elevation-1">
         <template v-slot:[`item.estado`]="{ item }">
           <v-chip v-if="item.estado == 0" small color="orange" dark>

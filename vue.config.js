@@ -4,6 +4,7 @@ module.exports = defineConfig({
     'vuetify'
   ],
   pwa: {
+    name: 'REPORTES SO',
     workboxOptions: {
       skipWaiting: true
     }

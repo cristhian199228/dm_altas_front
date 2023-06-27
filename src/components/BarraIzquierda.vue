@@ -27,6 +27,7 @@
             label="REGISTRO"></v-text-field></v-col>
       </v-row>
       <v-text-field v-model="paciente.celular" :disabled="!editar" dense label="CELULAR"></v-text-field>
+      <v-text-field v-model="paciente.correo" :disabled="!editar" dense label="CORREO"></v-text-field>
       <v-text-field v-model="paciente.puesto" :disabled="!editar" dense label="PUESTO"></v-text-field>
       <v-row>
         <v-col>

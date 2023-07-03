@@ -7,12 +7,18 @@
       <v-col cols="12" sm="2">
         <BarraIzquierda />
       </v-col>
-      <!--   <v-col cols="12" sm="4">
+        <v-col cols="12" sm="8">      
+        <DeclaracionMedicamentos />
         <v-card color="grey lighten-4" flat height="200px" tile>
           <v-toolbar dense color="#1E286C" dark>
             <v-spacer></v-spacer>
-            <v-toolbar-title>DESCANSOS MEDICOS</v-toolbar-title>
+            <v-toolbar-title><h5>DECLARACION DE DESCANSOS MEDICOS</h5></v-toolbar-title>
             <v-spacer></v-spacer>
+            <v-btn id="v-step-0" fab @click="nuevaAtencion()" small color="#EF820F">
+        <v-icon dark>
+          mdi-plus
+        </v-icon>
+        </v-btn>
           </v-toolbar>
           <v-card-text>
             <v-data-table :headers="headers" :items="atenciones" hide-default-footer class="elevation-1">
@@ -72,10 +78,10 @@
             </v-data-table>
           </v-card-text>
         </v-card>
-      </v-col> -->
-      <v-col cols="12" sm="8">
-        <DeclaracionMedicamentos />
       </v-col>
+      <!-- <v-col cols="12" sm="8">
+       
+      </v-col> -->
       <v-col cols="12" sm="2">
         <BarraDerecha />
       </v-col>
@@ -122,6 +128,8 @@ import DialogPdfConsentimiento from '@/components/DialogPdfConsentimiento.vue'
 import BarraDerecha from '@/components/BarraDerecha.vue'
 import BarraIzquierda from '@/components/BarraIzquierda.vue'
 import DeclaracionMedicamentos from '@/components/DeclaracionMedicamentos.vue'
+/* import AtencionDescansoMedicos from '@/components/AtencionDescansoMedicos.vue' */
+
 export default {
   name: 'FichasView',
   components: {
@@ -133,8 +141,9 @@ export default {
     Viewer,
     BarraDerecha,
     BarraIzquierda,
-    DeclaracionMedicamentos
-  },
+    DeclaracionMedicamentos,
+    /* AtencionDescansoMedicos */
+},
   data: () => ({
     myOptions: {
       useKeyboardNavigation: false,
